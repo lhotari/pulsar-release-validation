@@ -46,7 +46,9 @@ echo "Running validation script with arguments: $@";
 source "${SDKMAN_DIR}/bin/sdkman-init.sh";
 /pulsar_validation/validate_pulsar_release.sh "$@"
 '@
-
+    # Convert Windows line endings (CRLF) to Unix line endings (LF)
+    $dockerCmd = $dockerCmd -replace "`r`n", "`n"
+    
     docker run --privileged -v /var/run/docker.sock:/var/run/docker.sock `
       --rm --network $DockerNetwork -e DOCKER_NETWORK=$DockerNetwork $imageName `
       bash -c $dockerCmd bash "$scriptUrl" @args
