@@ -13,12 +13,14 @@ Supports both Unix-like systems (Bash) and Windows (PowerShell).
 
 ## Usage
 
-### Clone the repository
+### Clone or download the repository
 
 ```shell
 git clone https://github.com/lhotari/pulsar-release-validation
 cd pulsar-release-validation
 ```
+
+or [download the repository as a zip file](https://github.com/lhotari/pulsar-release-validation/archive/refs/heads/master.zip) and extract it.
 
 ### Run the validation script in a Docker container
 
