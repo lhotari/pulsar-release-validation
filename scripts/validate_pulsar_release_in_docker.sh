@@ -50,6 +50,11 @@ echo "Making script executable...";
 chmod +x /pulsar_validation/validate_pulsar_release.sh;
 echo "Running validation script with arguments: $@";
 source "${SDKMAN_DIR}/bin/sdkman-init.sh";
+# use java 17 for 3.0.x releases
+if [[ "$@" == *"3.0."* ]]; then
+    echo "Using java 17";
+    sdk u java 17;
+fi
 /pulsar_validation/validate_pulsar_release.sh "$@"' bash "$scriptUrl" "$@"
 
 # Check exit code
