@@ -35,7 +35,7 @@ On Unix-like systems (Linux, macOS):
 On Windows (PowerShell):
 
 ```shell
-./scripts/validate_pulsar_release_in_docker.ps1 [release-version] [candidate-number]
+.\scripts\validate_pulsar_release_in_docker.ps1 [release-version] [candidate-number]
 ```
 
 ### Examples
