@@ -55,6 +55,8 @@ if [[ "$@" == *"3.0."* ]]; then
     echo "Using java 17";
     sdk u java 17;
 fi
+# Pulsar build requires a lot of memory due to unefficient NAR file creation https://github.com/apache/nifi-maven/pull/35#issuecomment-2116764510
+export MAVEN_OPTS="-Xss1500k -XX:MaxRAMPercentage=70.0 -XX:+UnlockDiagnosticVMOptions -XX:GCLockerRetryAllocationCount=100"
 /pulsar_validation/validate_pulsar_release.sh "$@"' bash "$scriptUrl" "$@"
 
 # Check exit code
