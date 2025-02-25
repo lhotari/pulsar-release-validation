@@ -13,6 +13,7 @@ set -e
 # Docker image to use
 imageName=${PULSAR_RELEASE_VALIDATION_IMAGE:-"lhotari/pulsar-release-validation:1"}
 echo "Using image: $imageName"
+echo "Pulling the image will take a while since it includes the maven dependencies required to build Pulsar..."
 docker pull $imageName
 
 # Url for the validate_pulsar_release.sh script

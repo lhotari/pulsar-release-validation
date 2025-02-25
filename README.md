@@ -10,6 +10,8 @@ Supports both Unix-like systems (Bash) and Windows (PowerShell).
   - Testing of docker-in-docker support can be done with this command:
     - `docker run --privileged -v /var/run/docker.sock:/var/run/docker.sock --rm -it lhotari/pulsar-release-validation:1 docker ps`
 - Bash (for Unix-like systems) or PowerShell 7+ (for Windows)
+- Fast internet connection for downloading the validation docker image and Pulsar release.
+  - The [validation docker image (≈2.5GB)](https://hub.docker.com/r/lhotari/pulsar-release-validation/tags) includes a snapshot of the maven dependencies required to build Pulsar.
 
 ## Usage
 

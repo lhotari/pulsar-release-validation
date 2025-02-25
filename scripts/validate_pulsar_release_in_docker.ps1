@@ -13,6 +13,7 @@ $ErrorActionPreference = 'Stop'
 # Docker image to use
 $imageName = $env:PULSAR_RELEASE_VALIDATION_IMAGE ?? "lhotari/pulsar-release-validation:1"
 Write-Host "Using image: $imageName"
+Write-Host "Pulling the image will take a while since it includes the maven dependencies required to build Pulsar..."
 docker pull $imageName
 
 # Url for the validate_pulsar_release.sh script
