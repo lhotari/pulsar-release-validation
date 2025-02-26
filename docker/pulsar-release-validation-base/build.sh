@@ -4,6 +4,7 @@ set -euo pipefail
 DOCKER_USER="${DOCKER_USER:-lhotari}"
 
 TAGS=(
+  "${DOCKER_USER}/pulsar-release-validation-base:1"
   "${DOCKER_USER}/pulsar-release-validation-base:latest"
 )
 PLATFORMS="linux/amd64,linux/arm64"
