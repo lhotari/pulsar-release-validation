@@ -127,6 +127,8 @@ The following steps show how to run the validation script in a cloud VM in a Doc
 
 ##### Installing Docker & tooling
 
+This configures the VM optimized for running Java applications, docker containers and to also do profiling with async-profiler.
+
 ```shell
 # Install Docker and other tooling
 sudo bash -c "apt-get update && apt-get install -y docker.io git tmux sysfsutils htop curl zip unzip wget ca-certificates git gpg locales netcat-openbsd jq yq vim procps less netcat-openbsd dnsutils iputils-ping && adduser $USER docker"
