@@ -120,25 +120,72 @@ The following steps show how to run the validation script in a cloud VM in a Doc
 
 1. Create a Debian or Ubuntu based cloud VM.
 2. Start the VM and SSH into it.
-3. Install Docker and Git and logout.
-4. SSH again and install the validation script.
-5. Run the validation script.
+3. Install Docker and other tooling and logout.
+4. SSH again
+5. Start a tmux session so that you can reconnect later if the connection is lost.
+6. Run the validation script.
 
-Installing Docker & Git:
+##### Installing Docker & tooling*
 
 ```shell
-sudo bash -c "apt-get update && apt-get install -y docker.io git && adduser $USER docker"
+sudo bash -c "apt-get update && apt-get install -y docker.io git tmux sysfsutils && adduser $USER docker"
+cat <<EOF | sudo tee /etc/sysfs.d/transparent_hugepage.conf
+# use "madvise" Linux Transparent HugePages (THP) setting
+# https://www.kernel.org/doc/html/latest/admin-guide/mm/transhuge.html
+# "madvise" is generally a better option than the default "always" setting
+# Based on Azul instructions from https://docs.azul.com/prime/Enable-Huge-Pages#transparent-huge-pages-thp
+kernel/mm/transparent_hugepage/enabled=madvise
+kernel/mm/transparent_hugepage/shmem_enabled=madvise
+kernel/mm/transparent_hugepage/defrag=defer+madvise
+kernel/mm/transparent_hugepage/khugepaged/defrag=1
+EOF
+sudo systemctl enable sysfsutils.service
+sudo systemctl restart sysfsutils.service
+cat <<EOF | sudo tee /etc/sysctl.d/99-vm-tuning.conf
+vm.max_map_count=262144
+vm.swappiness=1
+fs.aio-max-nr=1048576
+fs.inotify.max_user_instances=1024
+fs.inotify.max_user_watches=1048576
+EOF
+sudo sysctl -p /etc/sysctl.d/99-vm-tuning.conf
+sudo mkdir -p /etc/systemd/system.conf.d/
+cat <<EOF | sudo tee /etc/systemd/system.conf.d/99-limits.conf
+[Manager]
+DefaultLimitNOFILE=1048576
+EOF
+sudo systemctl daemon-reload
+cat <<EOF | sudo tee /etc/security/limits.d/99-limits.conf
+*               soft    nofile          1048576
+*               hard    nofile          1048576
+EOF
+sudo systemctl restart docker
 exit
 ```
 
-Install the validation script:
+##### Start a tmux session
+
+```shell
+tmux
+```
+
+If the connection is lost, you can reconnect with the following command:
+
+```shell
+tmux attach
+```
+
+##### Install the validation script
 
 ```shell
 git clone https://github.com/lhotari/pulsar-release-validation
 cd pulsar-release-validation
 ```
 
-Run the validation script:
+##### Run the validation script
+
+Run this in the `tmux` session so that you can reconnect later if the connection is lost.
+GCP's web console will stall due to the amount of output from the validation script and you won't be able to see the output without tmux.
 
 Examples
 
