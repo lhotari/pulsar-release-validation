@@ -156,12 +156,22 @@ Connect to the VM with SSH:
 gcloud compute ssh pulsar-release-validation --zone=us-central1-c
 ```
 
-Deleting the VM after the validation is complete is recommended to avoid unnecessary costs.
+Stopping the VM after the validation is complete is necessary to avoid unnecessary costs.
+
+```shell
+gcloud compute instances stop pulsar-release-validation \
+  --zone=us-central1-c
+```
+
+If you don't need the VM anymore, you can delete it:
 
 ```shell
 gcloud compute instances delete pulsar-release-validation \
   --zone=us-central1-c
 ```
+
+The benefit of keeping the VM stopped is that you can start it again later without needing to configure the VM again and re-download the Maven dependencies each time.
+There will be a cost in keeping the VM stopped. You might want to create the VM with a smaller disk size to save on costs of keeping a stopped VM around.
 
 ##### Steps for setting up the VM and running the validation script
 
