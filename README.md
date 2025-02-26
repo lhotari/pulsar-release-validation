@@ -125,7 +125,7 @@ The following steps show how to run the validation script in a cloud VM in a Doc
 5. Start a tmux session so that you can reconnect later if the connection is lost.
 6. Run the validation script.
 
-##### Installing Docker & tooling*
+##### Installing Docker & tooling
 
 ```shell
 # Install Docker and other tooling
@@ -189,6 +189,10 @@ sudo systemctl daemon-reload
 sudo systemctl restart docker
 exit
 ```
+
+##### Reconnect to the VM
+
+Reconnect to the VM so that the default user can use Docker without sudo.
 
 ##### Start a tmux session
 
