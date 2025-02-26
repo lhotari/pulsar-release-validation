@@ -187,6 +187,17 @@ EOF
 # Reload systemd to apply the changes to systemd
 sudo systemctl daemon-reload
 
+# Limit Docker logging to 10MB and 3 files
+cat <<EOF | sudo tee /etc/docker/daemon.json
+{
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "10m",
+    "max-file": "3"
+  }
+}
+EOF
+
 # Restart Docker to apply the changes
 sudo systemctl restart docker
 exit
