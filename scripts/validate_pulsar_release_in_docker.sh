@@ -22,10 +22,10 @@ if [[ -n "$baseImageName" && -n "$m2CacheVolumeName" && "$m2CacheVolumeName" != 
     if [[ -z "$(docker volume ls -q -f name=$m2CacheVolumeName)" ]]; then
         echo "Volume $m2CacheVolumeName does not exist, creating it..."
         docker volume create $m2CacheVolumeName || { echo "Error: Failed to create volume $m2CacheVolumeName" >&2; exit 1; }
-        echo "Copying maven repository cache to volume $m2CacheVolumeName..."
         echo "Pulling the image will take a while since it includes the maven dependencies required to build Pulsar..."
         docker pull $imageName
         # Docker will copy files from the image to the volume when the container is started and it already contains the files
+        echo "Copying maven repository cache to volume $m2CacheVolumeName..."
         docker run --rm -v $m2CacheVolumeName:/root/.m2 $imageName /bin/bash -c "echo 'Files copied from $imageName to volume $m2CacheVolumeName'; rm -rf ~/.m2/repository/org/apache/pulsar; du -hs /root/.m2"
     fi
     imageName="$baseImageName"

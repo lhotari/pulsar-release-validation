@@ -27,10 +27,10 @@ if ($baseImageName -and $m2CacheVolumeName -and $m2CacheVolumeName -ne "none") {
             Write-Error "Error: Failed to create volume $m2CacheVolumeName"
             exit 1
         }
-        Write-Host "Copying maven repository cache to volume $m2CacheVolumeName..."
         Write-Host "Pulling the image will take a while since it includes the maven dependencies required to build Pulsar..."
         docker pull $imageName
         # Docker will copy files from the image to the volume when the container is started and it already contains the files
+        Write-Host "Copying maven repository cache to volume $m2CacheVolumeName..."
         docker run --rm -v "${m2CacheVolumeName}:/root/.m2" $imageName /bin/bash -c "echo 'Files copied from $imageName to volume $m2CacheVolumeName'; rm -rf ~/.m2/repository/org/apache/pulsar; du -hs /root/.m2"
     }
     $imageName = $baseImageName
