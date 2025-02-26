@@ -179,7 +179,7 @@ This configures the VM optimized for running Java applications, docker container
 
 ```shell
 # Install Docker and other tooling
-sudo bash -c "apt-get update && apt-get install -y docker.io git tmux sysfsutils htop curl zip unzip wget ca-certificates git gpg locales netcat-openbsd jq yq vim procps less netcat-openbsd dnsutils iputils-ping && adduser $USER docker"
+sudo bash -c "apt-get update && apt-get install -y docker.io git tig tmux sysfsutils htop curl zip unzip wget ca-certificates git gpg locales netcat-openbsd jq yq vim procps less netcat-openbsd dnsutils iputils-ping && adduser $USER docker"
 
 # Tune Linux Transparent HugePages (THP) for Java processes
 cat <<EOF | sudo tee /etc/sysfs.d/transparent_hugepage.conf
