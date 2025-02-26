@@ -166,8 +166,23 @@ On GCP, `e2-highcpu-8` with 200GB of pd-ssd disk space is a good choice for runn
 The 200GB disk space is recommended due to better disk I/O performance of larger disks. After running the validation script, you can stop the VM, create a snapshot of the VM's disk to retain the configuration and Maven cache before deleting the VM and the disk. Keeping the disk snapshot costs less than $1 per month.
 There are more details in the <<cost-considerations,cost considerations section>>.
 
+[[gcp-signup]]
+==== Signing up for GCP
+
+If you don't have a GCP account, you can sign up for a free trial at link:https://console.cloud.google.com/freetrial[Google Cloud Console].
+After signing up, you can create a project to get started. You will need to link:https://cloud.google.com/billing/docs/how-to/verify-billing-enabled#confirm_billing_is_enabled_on_a_project[enable billing] to use the GCP CLI.
+
 [[gcp-cli-setup]]
 ==== Setting up GCP CLI
+
+If you don't have the GCP CLI (`gcloud`) installed, you can install it with the following command:
+
+[source,shell]
+----
+curl https://sdk.cloud.google.com | bash
+----
+
+There are alternative ways to install the GCP CLI, see link:https://cloud.google.com/sdk/docs/install[the official documentation] for more details.
 
 Login and Select Project:
 
@@ -185,8 +200,18 @@ Set a default zone to avoid specifying it in every command:
 gcloud config set compute/zone us-central1-c
 ----
 
+You can list the available zones with the following command:
+
+[source,shell]
+----
+gcloud compute zones list
+----
+
+
 [[new-vm-creation]]
 ==== Creating a new VM
+
+Please see the <<cost-considerations,cost considerations section>> for details on the VM cost.
 
 [source,shell]
 ----
@@ -379,6 +404,11 @@ Now you can directly continue from the "Reconnect and Run the Validation" step.
 
 [[cost-considerations]]
 === GCP Cost Considerations
+
+[NOTE]
+====
+Updated prices are available at link:https://cloud.google.com/compute/vm-instance-pricing[Google Cloud VM Instance Pricing] and link:https://cloud.google.com/products/calculator[Google Cloud Pricing Calculator].
+====
 
 * *VM Costs*: An `e2-highcpu-8` VM costs approximately $145 per month ($0.21 per hour) when running.
 * *Disk Cost*: The 200GB pd-ssd disk costs about $34 per month, whether the VM is running or stopped.
