@@ -163,7 +163,8 @@ The instructions below provide specifics for GCP, but similar approaches can be 
 === Creating a VM in GCP
 
 On GCP, `e2-highcpu-8` with 200GB of pd-ssd disk space is a good choice for running the validation script (about $0.24 hourly rate).
-The 200GB disk space is recommended due to better disk I/O performance of larger disks.
+The 200GB disk space is recommended due to better disk I/O performance of larger disks. After running the validation script, you can stop the VM, create a snapshot of the VM's disk to retain the configuration and Maven cache before deleting the VM and the disk. Keeping the disk snapshot costs less than $1 per month.
+There are more details in the <<cost-considerations,cost considerations section>>.
 
 [[gcp-cli-setup]]
 ==== Setting up GCP CLI
