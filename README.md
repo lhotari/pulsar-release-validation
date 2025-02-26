@@ -128,7 +128,10 @@ The following steps show how to run the validation script in a cloud VM in a Doc
 ##### Installing Docker & tooling*
 
 ```shell
-sudo bash -c "apt-get update && apt-get install -y docker.io git tmux sysfsutils && adduser $USER docker"
+# Install Docker and other tooling
+sudo bash -c "apt-get update && apt-get install -y docker.io git tmux sysfsutils htop curl zip unzip wget ca-certificates git gpg locales netcat-openbsd jq yq vim procps less netcat-openbsd dnsutils iputils-ping && adduser $USER docker"
+
+# Tune Linux Transparent HugePages (THP) for Java processes
 cat <<EOF | sudo tee /etc/sysfs.d/transparent_hugepage.conf
 # use "madvise" Linux Transparent HugePages (THP) setting
 # https://www.kernel.org/doc/html/latest/admin-guide/mm/transhuge.html
@@ -141,24 +144,48 @@ kernel/mm/transparent_hugepage/khugepaged/defrag=1
 EOF
 sudo systemctl enable sysfsutils.service
 sudo systemctl restart sysfsutils.service
+
+# Tune Linux kernel settings
 cat <<EOF | sudo tee /etc/sysctl.d/99-vm-tuning.conf
-vm.max_map_count=262144
+# set swappiness to 1 to use swapping as a last resort
 vm.swappiness=1
+# set max_map_count to 262144 to allow large memory-mapped files
+vm.max_map_count=262144
+# set aio-max-nr to 1048576 to allow large asynchronous I/O, required by some docker container (not specific to Pulsar)
 fs.aio-max-nr=1048576
+# set inotify limits to allow large number of files to be watched
 fs.inotify.max_user_instances=1024
 fs.inotify.max_user_watches=1048576
+# allow async-profiler to profile non-root processes
+# https://github.com/jvm-profiling-tools/async-profiler#basic-usage
+# non-root process requires setting two runtime variables
+kernel.perf_event_paranoid=1
+kernel.kptr_restrict=0
+# https://github.com/jvm-profiling-tools/async-profiler#restrictionslimitations
+kernel.perf_event_max_stack=1024
+# Profiler allocates 8kB perf_event buffer for each thread of the target process.
+# Make sure value is large enough (more than 8 * threads)
+kernel.perf_event_mlock_kb=2048
 EOF
 sudo sysctl -p /etc/sysctl.d/99-vm-tuning.conf
+
+# Configure number of open files limits for systemd
 sudo mkdir -p /etc/systemd/system.conf.d/
 cat <<EOF | sudo tee /etc/systemd/system.conf.d/99-limits.conf
 [Manager]
 DefaultLimitNOFILE=1048576
 EOF
-sudo systemctl daemon-reload
+
+# Configure number of open files limits for the default user
 cat <<EOF | sudo tee /etc/security/limits.d/99-limits.conf
 *               soft    nofile          1048576
 *               hard    nofile          1048576
 EOF
+
+# Reload systemd to apply the changes to systemd
+sudo systemctl daemon-reload
+
+# Restart Docker to apply the changes
 sudo systemctl restart docker
 exit
 ```
