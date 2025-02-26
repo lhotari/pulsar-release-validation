@@ -130,7 +130,7 @@ You can create the VM in the GCP web console or using the command line.
 
 For command line creation of the VM in GCP, you need to:
 
-Login and select the project:
+Login and Select Project:
 
 ```shell
 gcloud auth login
@@ -138,40 +138,43 @@ gcloud projects list
 gcloud config set project [project-id]
 ```
 
-Create the VM with the following command:
+Set a default zone to avoid specifying it in every command:
+
+```shell
+gcloud config set compute/zone us-central1-c
+```
+
+Create VM:
 
 ```shell
 gcloud compute instances create pulsar-release-validation \
   --machine-type=e2-highcpu-8 \
-  --zone=us-central1-c \
   --image-family=debian-12 \
   --image-project=debian-cloud \
   --boot-disk-size=200GB \
   --boot-disk-type=pd-ssd
 ```
 
-Connect to the VM with SSH:
+Connect to VM via SSH:
 
 ```shell
-gcloud compute ssh pulsar-release-validation --zone=us-central1-c
+gcloud compute ssh pulsar-release-validation
 ```
 
-Stopping the VM after the validation is complete is necessary to avoid unnecessary costs.
+Stop VM (After Validation):
 
 ```shell
-gcloud compute instances stop pulsar-release-validation \
-  --zone=us-central1-c
+gcloud compute instances stop pulsar-release-validation
 ```
 
-If you don't need the VM anymore, you can delete it:
+Delete VM (If No Longer Needed)
 
 ```shell
-gcloud compute instances delete pulsar-release-validation \
-  --zone=us-central1-c
+gcloud compute instances delete pulsar-release-validation
 ```
 
-The benefit of keeping the VM stopped is that you can start it again later without needing to configure the VM again and re-download the Maven dependencies each time.
-There will be a cost in keeping the VM stopped. You might want to create the VM with a smaller disk size to save on costs of keeping a stopped VM around.
+The benefit of keeping the VM stopped is that you can start it again later without needing to reconfigure the VM or re-download the Maven dependencies each time.
+There will be a cost for keeping the VM stopped. You might want to create the VM with a smaller disk size to reduce the costs of keeping a stopped VM around.
 
 ##### Steps for setting up the VM and running the validation script
 
