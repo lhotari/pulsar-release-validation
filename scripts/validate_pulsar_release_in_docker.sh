@@ -68,7 +68,7 @@ containerName="pulsar_validation_$(date +%s)"
 echo "Running validation script in container..."
 
 # Run the container and capture its ID
-docker run --name $containerName --privileged -v /var/run/docker.sock:/var/run/docker.sock \
+docker run --init --name $containerName --privileged -v /var/run/docker.sock:/var/run/docker.sock \
   --rm $volumeMountOption --network $DOCKER_NETWORK -e DOCKER_NETWORK=$DOCKER_NETWORK $imageName \
   bash -c 'set -e
 scriptUrl="$1"
