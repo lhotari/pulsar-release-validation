@@ -68,7 +68,7 @@ containerName="pulsar_validation_$(date +%s)"
 echo "Running validation script in container..."
 
 # Run the container and capture its ID
-containerId=$(docker run --name $containerName --privileged -v /var/run/docker.sock:/var/run/docker.sock \
+docker run --name $containerName --privileged -v /var/run/docker.sock:/var/run/docker.sock \
   --rm $volumeMountOption --network $DOCKER_NETWORK -e DOCKER_NETWORK=$DOCKER_NETWORK $imageName \
   bash -c 'set -e
 scriptUrl="$1"
@@ -106,7 +106,7 @@ if [[ -n "$pulsarVersion" ]]; then
     du -hs /root/.m2
 fi
 exit $retval
-' bash "$scriptUrl" "$@")
+' bash "$scriptUrl" "$@"
 
 # Check exit code
 if [ $? -ne 0 ]; then
