@@ -198,6 +198,8 @@ Reconnect to the VM so that the default user can use Docker without sudo.
 
 ##### Start a tmux session
 
+If you are new to tmux, you can read [this article](https://www.redhat.com/en/blog/introduction-tmux-linux) for a quick start. For the key bindings, this [cheat sheet](https://tmuxcheatsheet.com/) is useful.
+
 ```shell
 tmux
 ```
