@@ -114,7 +114,7 @@ Examples
 #### Run the validation script in a cloud VM in a Docker container
 
 Debian or Ubuntu based cloud VMs are available from all major cloud providers.
-Pick a VM with at least 8GB of RAM (for example e2-standard-2 on GCP).
+Pick a VM with at least 8GB of RAM (for example e2-standard-2 on GCP) and at least 30GB of disk space.
 
 The following steps show how to run the validation script in a cloud VM in a Docker container.
 
