@@ -102,6 +102,7 @@ fi
 retval=$?
 if [[ -n "$pulsarVersion" ]]; then
     # delete built Pulsar dependencies from the maven repository cache
+    echo "Deleting built Pulsar dependencies from the maven repository cache..."
     ls -G -d /root/.m2/repository/org/apache/pulsar/**/$pulsarVersion 2> /dev/null | xargs -r rm -rf
     du -hs /root/.m2
 fi
