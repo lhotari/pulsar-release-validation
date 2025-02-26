@@ -1,21 +1,22 @@
-# Apache Pulsar Release Candidate Validation Scripts
+# Apache Pulsar Release Candidate Validation Scripts {#overview}
 
 Scripts to [validate Apache Pulsar release candidates](https://pulsar.apache.org/contribute/validate-release-candidate/) using Docker containers.
-Supports both Unix-like systems (Bash) and Windows (PowerShell).
+These scripts support both Unix-like systems (Bash) and Windows (PowerShell).
 
-## Prerequisites
+## Prerequisites {#prerequisites}
 
 - Docker with docker-in-docker support for running the validation script that launches a Cassandra container inside a container
   - This is required for the validation script to work
-  - Testing of docker-in-docker support can be done with this command:
+  - You can test docker-in-docker support with this command:
     - `docker run --privileged -v /var/run/docker.sock:/var/run/docker.sock --rm -it lhotari/pulsar-release-validation:1 docker ps`
 - Bash (for Unix-like systems) or PowerShell 7+ (for Windows)
-- Fast internet connection for downloading the validation docker image and Pulsar release.
-  - The [validation docker image (≈2.5GB)](https://hub.docker.com/r/lhotari/pulsar-release-validation/tags) includes a snapshot of the maven dependencies required to build Pulsar.
+- Fast internet connection for downloading the validation docker image and Pulsar release
+  - The [validation docker image (≈2.5GB)](https://hub.docker.com/r/lhotari/pulsar-release-validation/tags) includes a snapshot of the majority of the maven dependencies required to build Pulsar.
+  - The Pulsar build will download the remaining dependencies (≈0.7GB) at build time.
 
-## Usage
+## Usage {#usage}
 
-### Clone or download the repository
+### Clone or download the repository {#repo-setup}
 
 ```shell
 git clone https://github.com/lhotari/pulsar-release-validation
@@ -24,15 +25,15 @@ cd pulsar-release-validation
 
 or [download the repository as a zip file](https://github.com/lhotari/pulsar-release-validation/archive/refs/heads/master.zip) and extract it.
 
-### Run the validation script in a Docker container
+### Run the validation script in a Docker container {#docker-validation}
 
-#### On Unix-like systems (Linux, macOS)
+#### On Unix-like systems (Linux, macOS) {#unix-validation}
 
 ```shell
 ./scripts/validate_pulsar_release_in_docker.sh [release-version] [candidate-number] | tee [log-file-name]
 ```
 
-Examples
+Examples:
 
 ```shell
 # Validate release candidate 1 of version 3.0.10
@@ -45,13 +46,13 @@ Examples
 ./scripts/validate_pulsar_release_in_docker.sh 4.0.3 2 | tee validate_pulsar_release_`date +%Y-%m-%d_%H-%M-%S`.log
 ```
 
-#### On Windows (PowerShell)
+#### On Windows (PowerShell) {#windows-validation}
 
 ```powershell
 .\scripts\validate_pulsar_release_in_docker.ps1 [release-version] [candidate-number] | Tee-Object -FilePath [log-file-name]
 ```
 
-Examples
+Examples:
 
 ```powershell
 # Validate release candidate 1 of version 3.0.10
@@ -64,11 +65,11 @@ Examples
 .\scripts\validate_pulsar_release_in_docker.ps1 4.0.3 2 | Tee-Object -FilePath "validate_pulsar_release_$(Get-Date -Format 'yyyy-MM-dd_HH-mm-ss').log"
 ```
 
-### Maven Repository Cache
+### Maven Repository Cache {#maven-cache}
 
 The validation script will use a persistent Docker volume to hold a Maven repository cache to speed up the build process of subsequent release candidate validations.
-The cache volume is named `pulsar_release_validation_m2_cache`. It gets created automatically when the first release candidate validation is run.
-The contents of the volume is primed with the maven dependencies included in the validation docker image, however since it doesn't include all the dependencies, the cache volume solution will effectively prevent the "downloading the internet" problem when validating release candidates.
+The cache volume is named `pulsar_release_validation_m2_cache`. It is created automatically when the first release candidate validation is run.
+The volume's contents are primed with the maven dependencies included in the validation docker image. However, since it doesn't include all dependencies, the cache volume solution effectively prevents the "downloading the internet" problem when validating release candidates.
 
 If you'd like to delete the cache volume, you can do so with the following command:
 
@@ -88,9 +89,9 @@ To disable the Maven repository cache, set the following environment variable:
 export PULSAR_RELEASE_VALIDATION_M2_CACHE_VOLUME=none
 ```
 
-### Alternative Ways to Run the Validation Script
+## Alternative Ways to Run the Validation Script {#alternative-validation}
 
-#### Run the validation script directly
+### Run the validation script directly {#direct-validation}
 
 One benefit of running the script directly is that if validation fails, you can retry without needing to re-download and rebuild the Pulsar release.
 
@@ -98,7 +99,7 @@ One benefit of running the script directly is that if validation fails, you can 
 ./scripts/validate_pulsar_release.sh [release-version] [candidate-number] | tee [log-file-name]
 ```
 
-Examples
+Examples:
 
 ```shell
 # Validate release candidate 1 of version 3.0.10
@@ -111,9 +112,13 @@ Examples
 ./scripts/validate_pulsar_release.sh 4.0.3 2 | tee validate_pulsar_release_`date +%Y-%m-%d_%H-%M-%S`.log
 ```
 
-#### Run the validation script in a cloud VM in a Docker container
+## Cloud VM Instructions {#cloud-vm}
 
-Debian or Ubuntu based cloud VMs are available from all major cloud providers.
+Running the validation in a cloud VM can be an efficient approach, especially for users with limited local resources or bandwidth.
+
+### General Cloud VM Requirements {#vm-requirements}
+
+Debian or Ubuntu based cloud VMs are available from all major cloud providers (AWS, Azure, GCP, etc.).
 
 Pick a VM with at least:
 
@@ -121,14 +126,14 @@ Pick a VM with at least:
 - 4 CPU cores / 8 virtual CPUs
 - 30GB of disk space (choose larger size for better performance)
 
-##### Creating a VM in GCP
+The instructions below provide specifics for GCP, but similar approaches can be used on AWS and Azure with their respective CLI tools and VM offerings.
 
-On GCP, `e2-highcpu-8` with 200GB of pd-ssd disk space is a good choice for running the validation script. (about $0.24 hourly rate)
-The 200GB disk space is used due to better disk I/O performance of larger disks.
+### Creating a VM in GCP {#gcp-vm-creation}
 
-You can create the VM in the GCP web console or using the command line.
+On GCP, `e2-highcpu-8` with 200GB of pd-ssd disk space is a good choice for running the validation script (about $0.24 hourly rate).
+The 200GB disk space is recommended due to better disk I/O performance of larger disks.
 
-For command line creation of the VM in GCP, you need to:
+#### Setting up GCP CLI {#gcp-cli-setup}
 
 Login and Select Project:
 
@@ -144,7 +149,7 @@ Set a default zone to avoid specifying it in every command:
 gcloud config set compute/zone us-central1-c
 ```
 
-Create VM:
+#### Creating a new VM {#new-vm-creation}
 
 ```shell
 gcloud compute instances create pulsar-release-validation \
@@ -161,35 +166,11 @@ Connect to VM via SSH:
 gcloud compute ssh pulsar-release-validation
 ```
 
-Stop VM (After Validation):
+### VM Setup and Configuration {#vm-setup}
 
-```shell
-gcloud compute instances stop pulsar-release-validation
-```
+#### Installing Docker & tooling {#docker-install}
 
-Delete VM (If No Longer Needed)
-
-```shell
-gcloud compute instances delete pulsar-release-validation
-```
-
-The benefit of keeping the VM stopped is that you can start it again later without needing to reconfigure the VM or re-download the Maven dependencies each time.
-There will be a cost for keeping the VM stopped. You might want to create the VM with a smaller disk size to reduce the costs of keeping a stopped VM around.
-
-##### Steps for setting up the VM and running the validation script
-
-The following steps show how to run the validation script in a cloud VM in a Docker container.
-
-1. Create a Debian or Ubuntu based cloud VM.
-2. Start the VM and SSH into it.
-3. Install Docker and other tooling and logout.
-4. SSH again
-5. Start a tmux session so that you can reconnect later if the connection is lost.
-6. Run the validation script.
-
-##### Installing Docker & tooling
-
-This configures the VM optimized for running Java applications, docker containers and to also do profiling with async-profiler.
+This configures the VM optimized for running Java applications, docker containers, and also enables profiling with async-profiler.
 
 ```shell
 # Install Docker and other tooling
@@ -265,44 +246,91 @@ sudo systemctl restart docker
 exit
 ```
 
-##### Reconnect to the VM
+#### Reconnect and Run the Validation {#reconnect-validation}
 
-Reconnect to the VM so that the default user can use Docker without sudo.
+After setting up the VM:
 
-##### Start a tmux session
+1. Reconnect to the VM:
 
-If you are new to tmux, you can read [this article](https://www.redhat.com/en/blog/introduction-tmux-linux) for a quick start. For the key bindings, this [cheat sheet](https://tmuxcheatsheet.com/) is useful.
+   ```shell
+   gcloud compute ssh pulsar-release-validation
+   ```
+
+2. Start a tmux session (allows reconnecting if connection drops):
+
+   ```shell
+   tmux
+   ```
+   
+   If you are new to tmux, you can read [this article](https://www.redhat.com/en/blog/introduction-tmux-linux) for a quick start. For the key bindings, this [cheat sheet](https://tmuxcheatsheet.com/) is useful.
+   
+   If the connection is lost, you can reconnect to the tmux session with:
+
+   ```shell
+   tmux attach
+   ```
+
+3. Clone or update the repository and run validation:
+
+   ```shell
+   # Clone the repository if it doesn't exist, otherwise pull the latest changes
+   [ ! -d pulsar-release-validation ] && git clone https://github.com/lhotari/pulsar-release-validation && cd pulsar-release-validation || cd pulsar-release-validation && git pull origin master
+   # Run the validation script
+   ./scripts/validate_pulsar_release_in_docker.sh 4.0.3 2 | tee validate_pulsar_release_`date +%Y-%m-%d_%H-%M-%S`.log
+   ```
+
+### GCP VM Disk Snapshot Management {#snapshot-management}
+
+#### Creating a Disk Snapshot on GCP {#create-snapshot}
+
+After validating a release, you can create a snapshot of the VM's disk to retain the configuration and Maven cache:
 
 ```shell
-tmux
+# First, lookup the boot disk name for the VM
+BOOT_DISK_NAME=$(gcloud compute instances describe pulsar-release-validation --format="value(disks[0].source.basename())")
+echo "Boot disk name: $BOOT_DISK_NAME"
+
+# Create a snapshot of the VM's disk
+gcloud compute disks snapshot $BOOT_DISK_NAME \
+  --snapshot-names=pulsar-validation-snapshot \
+  --description="Snapshot of Pulsar Release Validation VM with Maven cache"
 ```
 
-If the connection is lost, you can reconnect with the following command:
+#### Deleting the VM After Creating a Snapshot {#delete-vm}
+
+Once you've created a snapshot, you can delete the VM to avoid ongoing charges:
 
 ```shell
-tmux attach
+gcloud compute instances delete pulsar-release-validation
 ```
 
-##### Install the validation script
+#### Creating a New VM from a Snapshot {#vm-from-snapshot}
+
+When you need to validate a new release, you can create a VM from your snapshot:
 
 ```shell
-git clone https://github.com/lhotari/pulsar-release-validation
-cd pulsar-release-validation
+# First, create a disk from the snapshot
+gcloud compute disks create pulsar-release-validation \
+  --source-snapshot=pulsar-validation-snapshot \
+  --size=200GB \
+  --type=pd-ssd
+
+# Then, create a VM using this disk
+gcloud compute instances create pulsar-release-validation \
+  --machine-type=e2-highcpu-8 \
+  --disk=name=pulsar-release-validation,boot=yes
 ```
 
-##### Run the validation script
+Now you can directly continue from the "Reconnect and Run the Validation" step.
 
-Run this in the `tmux` session so that you can reconnect later if the connection is lost.
+### GCP Cost Considerations {#cost-considerations}
 
-Examples
+- **VM Costs**: An `e2-highcpu-8` VM costs approximately $145 per month ($0.21 per hour) when running.
+- **Disk Cost**: The 200GB pd-ssd disk costs about $34 per month, whether the VM is running or stopped.
+- **Disk Snapshot**: Keeping a disk snapshot costs less than $1/month for a 200GB snapshot.
+- **Approach Comparison**:
+  - **Stopped VM**: This will cost about $34 per month for the disk.
+  - **Without Snapshot**: Each time you need to validate a release, you create a new VM and go through the entire setup process, including downloading and configuring all dependencies.
+  - **With Snapshot**: You pay a small monthly fee (<$1) to store the snapshot but save significant time and bandwidth when validating new releases, as the VM will already have Docker installed, system tuned, and Maven dependencies cached.
 
-```shell
-# Validate release candidate 1 of version 3.0.10
-./scripts/validate_pulsar_release_in_docker.sh 3.0.10 1 | tee validate_pulsar_release_`date +%Y-%m-%d_%H-%M-%S`.log
-
-# Validate release candidate 2 of version 3.3.5
-./scripts/validate_pulsar_release_in_docker.sh 3.3.5 2 | tee validate_pulsar_release_`date +%Y-%m-%d_%H-%M-%S`.log
-
-# Validate release candidate 2 of version 4.0.3
-./scripts/validate_pulsar_release_in_docker.sh 4.0.3 2 | tee validate_pulsar_release_`date +%Y-%m-%d_%H-%M-%S`.log
-```
+This snapshot approach is particularly beneficial for frequent release validation or for users with limited bandwidth, as it eliminates the need to repeatedly download large Maven dependencies.
