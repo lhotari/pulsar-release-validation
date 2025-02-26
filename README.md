@@ -119,9 +119,50 @@ Pick a VM with at least:
 
 - 8GB of RAM
 - 4 CPU cores / 8 virtual CPUs
-- 30GB of disk space
+- 30GB of disk space (choose larger size for better performance)
 
-On GCP, `e2-highcpu-8` is a good choice for this. ($0.20/hour)
+##### Creating a VM in GCP
+
+On GCP, `e2-highcpu-8` with 200GB of disk space is a good choice for running the validation script. (about $0.23 hourly rate)
+The 200GB disk space is used due to better disk I/O performance of larger disks.
+
+You can create the VM in the GCP web console or using the command line.
+
+For command line creation of the VM in GCP, you need to:
+
+Login and select the project:
+
+```shell
+gcloud auth login
+gcloud projects list
+gcloud config set project [project-id]
+```
+
+Create the VM with the following command:
+
+```shell
+gcloud compute instances create pulsar-release-validation \
+  --machine-type=e2-highcpu-8 \
+  --zone=us-central1-c \
+  --image-family=debian-12 \
+  --image-project=debian-cloud \
+  --boot-disk-size=200GB
+```
+
+Connect to the VM with SSH:
+
+```shell
+gcloud compute ssh pulsar-release-validation --zone=us-central1-c
+```
+
+Deleting the VM after the validation is complete is recommended to avoid unnecessary costs.
+
+```shell
+gcloud compute instances delete pulsar-release-validation \
+  --zone=us-central1-c
+```
+
+##### Steps for setting up the VM and running the validation script
 
 The following steps show how to run the validation script in a cloud VM in a Docker container.
 
