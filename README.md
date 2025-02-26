@@ -123,7 +123,7 @@ Pick a VM with at least:
 
 ##### Creating a VM in GCP
 
-On GCP, `e2-highcpu-8` with 200GB of disk space is a good choice for running the validation script. (about $0.23 hourly rate)
+On GCP, `e2-highcpu-8` with 200GB of disk space is a good choice for running the validation script. (about $0.24 hourly rate)
 The 200GB disk space is used due to better disk I/O performance of larger disks.
 
 You can create the VM in the GCP web console or using the command line.
@@ -146,7 +146,8 @@ gcloud compute instances create pulsar-release-validation \
   --zone=us-central1-c \
   --image-family=debian-12 \
   --image-project=debian-cloud \
-  --boot-disk-size=200GB
+  --boot-disk-size=200GB \
+  --boot-disk-type=pd-ssd
 ```
 
 Connect to the VM with SSH:
