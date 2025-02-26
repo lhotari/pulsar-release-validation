@@ -216,7 +216,6 @@ cd pulsar-release-validation
 ##### Run the validation script
 
 Run this in the `tmux` session so that you can reconnect later if the connection is lost.
-GCP's web console will stall due to the amount of output from the validation script and you won't be able to see the output without tmux.
 
 Examples
 
