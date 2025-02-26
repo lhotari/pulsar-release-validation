@@ -110,3 +110,45 @@ Examples
 # Validate release candidate 2 of version 4.0.3
 ./scripts/validate_pulsar_release.sh 4.0.3 2 | tee validate_pulsar_release_`date +%Y-%m-%d_%H-%M-%S`.log
 ```
+
+#### Run the validation script in a cloud VM in a Docker container
+
+Debian or Ubuntu based cloud VMs are available from all major cloud providers.
+Pick a VM with at least 8GB of RAM (for example e2-standard-2 on GCP).
+
+The following steps show how to run the validation script in a cloud VM in a Docker container.
+
+1. Create a Debian or Ubuntu based cloud VM.
+2. Start the VM and SSH into it.
+3. Install Docker and Git and logout.
+4. SSH again and install the validation script.
+5. Run the validation script.
+
+Installing Docker & Git:
+
+```shell
+sudo bash -c "apt-get update && apt-get install -y docker.io git && adduser $USER docker"
+exit
+```
+
+Install the validation script:
+
+```shell
+git clone https://github.com/lhotari/pulsar-release-validation
+cd pulsar-release-validation
+```
+
+Run the validation script:
+
+Examples
+
+```shell
+# Validate release candidate 1 of version 3.0.10
+./scripts/validate_pulsar_release_in_docker.sh 3.0.10 1 | tee validate_pulsar_release_`date +%Y-%m-%d_%H-%M-%S`.log
+
+# Validate release candidate 2 of version 3.3.5
+./scripts/validate_pulsar_release_in_docker.sh 3.3.5 2 | tee validate_pulsar_release_`date +%Y-%m-%d_%H-%M-%S`.log
+
+# Validate release candidate 2 of version 4.0.3
+./scripts/validate_pulsar_release_in_docker.sh 4.0.3 2 | tee validate_pulsar_release_`date +%Y-%m-%d_%H-%M-%S`.log
+```
