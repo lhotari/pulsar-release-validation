@@ -366,7 +366,10 @@ After validating a release, you can create a snapshot of the VM's disk to retain
 
 [source,shell]
 ----
-# First, lookup the boot disk name for the VM
+# stop the VM before creating a snapshot
+gcloud compute instances stop pulsar-release-validation
+
+# lookup the boot disk name for the VM
 BOOT_DISK_NAME=$(gcloud compute instances describe pulsar-release-validation --format="value(disks[0].source.basename())")
 echo "Boot disk name: $BOOT_DISK_NAME"
 
