@@ -32,13 +32,7 @@ or [download the repository as a zip file](https://github.com/lhotari/pulsar-rel
 ./scripts/validate_pulsar_release_in_docker.sh [release-version] [candidate-number] | tee [log-file-name]
 ```
 
-On Windows (PowerShell):
-
-```shell
-.\scripts\validate_pulsar_release_in_docker.ps1 [release-version] [candidate-number]
-```
-
-### Examples
+Examples
 
 ```shell
 # Validate release candidate 1 of version 3.0.10
