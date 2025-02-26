@@ -112,7 +112,7 @@ exit $retval
     }
     
     # Run the container and capture its ID
-    docker run --init --name $containerName --privileged -v /var/run/docker.sock:/var/run/docker.sock `
+    docker run -it --init --name $containerName --privileged -v /var/run/docker.sock:/var/run/docker.sock `
       $volumeMountOptionArgs --network $DockerNetwork -e DOCKER_NETWORK=$DockerNetwork $imageName `
       bash -c $dockerCmd bash "$scriptUrl" @args
     
