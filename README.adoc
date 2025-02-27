@@ -360,12 +360,18 @@ If the connection is lost, you can reconnect to the tmux session with:
 tmux attach
 ----
 
-3. Clone or update the repository and run validation:
+3. Clone or update the repository
 +
 [source,shell]
 ----
 # Clone the repository if it doesn't exist, otherwise pull the latest changes
 [ ! -d pulsar-release-validation ] && git clone https://github.com/lhotari/pulsar-release-validation && cd pulsar-release-validation || cd pulsar-release-validation && git pull origin master
+----
+
+4. Run the validation script:
++
+[source,shell]
+----
 # Run the validation script
 ./scripts/validate_pulsar_release_in_docker.sh 4.0.3 2 | tee validate_pulsar_release_`date +%Y-%m-%d_%H-%M-%S`.log
 ----
