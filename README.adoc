@@ -107,6 +107,20 @@ To verify the disk usage of the cache volume, you can run the following command:
 docker system df -v | grep pulsar_release_validation_m2_cache
 ----
 
+To get a shell into a container with the cache volume mounted, you can run the following command:
+
+[source,shell]
+----
+docker run --rm -it -v pulsar_release_validation_m2_cache:/root/.m2 lhotari/pulsar-release-validation-base /bin/bash
+----
+
+In the container shell, you can then inspect the contents of the cache volume:
+
+[source,shell]
+----
+find /root/.m2/repository
+----
+
 To disable the Maven repository cache, set the following environment variable:
 
 [source,shell]
