@@ -10,10 +10,14 @@
 # Enable strict mode
 set -e
 
+# default lhotari/pulsar-release-validation version for images and scripts
+# this is bumped when there's a backwards incompatible change in the script or images
+scriptVersion=${PULSAR_RELEASE_VALIDATION_SCRIPT_VERSION:-"v1"}
+
 # Docker image with maven repository cache to use
-imageName=${PULSAR_RELEASE_VALIDATION_IMAGE:-"lhotari/pulsar-release-validation:1"}
+imageName=${PULSAR_RELEASE_VALIDATION_IMAGE:-"lhotari/pulsar-release-validation:$scriptVersion"}
 # Docker image without maven repository cache to use
-baseImageName=${PULSAR_RELEASE_VALIDATION_BASE_IMAGE:-"lhotari/pulsar-release-validation-base:1"}
+baseImageName=${PULSAR_RELEASE_VALIDATION_BASE_IMAGE:-"lhotari/pulsar-release-validation-base:$scriptVersion"}
 # Docker volume to use for caching maven dependencies, set to "none" to disable caching
 m2CacheVolumeName=${PULSAR_RELEASE_VALIDATION_M2_CACHE_VOLUME:-"pulsar_release_validation_m2_cache"}
 
@@ -39,7 +43,7 @@ fi
 docker pull $imageName
 
 # Url for the validate_pulsar_release.sh script
-scriptUrl=${PULSAR_RELEASE_VALIDATION_SCRIPT:-"https://raw.githubusercontent.com/lhotari/pulsar-release-validation/refs/heads/master/scripts/validate_pulsar_release.sh"}
+scriptUrl=${PULSAR_RELEASE_VALIDATION_SCRIPT:-"https://raw.githubusercontent.com/lhotari/pulsar-release-validation/refs/heads/$scriptVersion/scripts/validate_pulsar_release.sh"}
 echo "Using validation script: $scriptUrl"
 
 # Create unique docker network
