@@ -1,4 +1,6 @@
-FROM lhotari/pulsar-release-validation-base:latest AS m2-repo-cache-builder
+ARG VERSION_TAG=latest
+
+FROM lhotari/pulsar-release-validation-base:${VERSION_TAG} AS m2-repo-cache-builder
 RUN --mount=type=cache,target=/root/.m2,id=maven-cache /bin/bash <<'EOS'
 source "${SDKMAN_DIR}/bin/sdkman-init.sh"
 cd /tmp
@@ -11,5 +13,5 @@ mkdir -p /m2-cache
 cp -r /root/.m2/* /m2-cache/
 EOS
 
-FROM lhotari/pulsar-release-validation-base:latest
+FROM lhotari/pulsar-release-validation-base:${VERSION_TAG}
 COPY --from=m2-repo-cache /m2-cache /root/.m2

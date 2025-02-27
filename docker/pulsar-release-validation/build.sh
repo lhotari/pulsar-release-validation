@@ -14,6 +14,7 @@ PLATFORMS="linux/amd64,linux/arm64"
 # Build the m2-repo-cache-builder stage, caching the maven dependencies so that
 # downloaded dependencies can be shared across platforms which are built in isolation.
 docker buildx build \
+  --build-arg VERSION_TAG=${VERSION_TAG} \
   --platform ${PLATFORMS} \
   --no-cache \
   --progress=plain \
@@ -25,6 +26,7 @@ docker buildx build \
 
 # Build and push the multi-platform image
 docker buildx build \
+  --build-arg VERSION_TAG=${VERSION_TAG} \
   --platform ${PLATFORMS} \
   --no-cache \
   --progress=plain \
