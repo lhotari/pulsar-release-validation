@@ -171,6 +171,8 @@ Pick a VM with at least:
 * 4 CPU cores / 8 virtual CPUs
 * 30GB of disk space (choose larger size for better performance)
 
+Release validation for a single release candidate takes about 15 minutes when running on an `e2-highcpu-8` VM in GCP with 200GB of pd-ssd disk space. With low-resource VMs, the validation can take a very long time. That's why it's recommended to run the validation in a cloud VM with sufficient resources. The VM can be deleted after the validation is complete, so the cost is minimal for a single validation run. The VM disk can be snapshotted to retain the configuration and Maven cache for subsequent validation runs. Keeping the disk snapshot will cost less than $1 per month on GCP (depending on the snapshot size).
+
 The instructions below provide specifics for GCP, but similar approaches can be used on AWS and Azure with their respective CLI tools and VM offerings.
 
 [[gcp-vm-creation]]
