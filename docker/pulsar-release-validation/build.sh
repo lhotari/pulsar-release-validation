@@ -3,8 +3,10 @@ set -euo pipefail
 
 DOCKER_USER="${DOCKER_USER:-lhotari}"
 
+VERSION_TAG=${VERSION_TAG:-"v1"}
+
 TAGS=(
-  "${DOCKER_USER}/pulsar-release-validation:1"
+  "${DOCKER_USER}/pulsar-release-validation:${VERSION_TAG}"
   "${DOCKER_USER}/pulsar-release-validation:latest"
 )
 PLATFORMS="linux/amd64,linux/arm64"
