@@ -103,12 +103,12 @@ if [[ ! $LOCAL ]]; then
     for file in apache-pulsar-$VERSION-bin.tar.gz apache-pulsar-$VERSION-bin.tar.gz.asc \
     apache-pulsar-$VERSION-bin.tar.gz.sha512 apache-pulsar-$VERSION-src.tar.gz apache-pulsar-$VERSION-src.tar.gz.asc \
     apache-pulsar-$VERSION-src.tar.gz.sha512; do
-        wget -nv --progress=bar:force:noscroll -c $BASE_URL/$file
+        wget -nv --show-progress --progress=bar:force:noscroll -c $BASE_URL/$file
     done
 
     for file in pulsar-io-cassandra-$VERSION.nar pulsar-io-cassandra-$VERSION.nar.asc \
     pulsar-io-cassandra-$VERSION.nar.sha512; do
-        wget -nv --progress=bar:force:noscroll -c $BASE_URL/connectors/$file
+        wget -nv --show-progress --progress=bar:force:noscroll -c $BASE_URL/connectors/$file
     done
 
     # Import the Pulsar KEYS
