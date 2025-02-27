@@ -103,12 +103,12 @@ if [[ ! $LOCAL ]]; then
     for file in apache-pulsar-$VERSION-bin.tar.gz apache-pulsar-$VERSION-bin.tar.gz.asc \
     apache-pulsar-$VERSION-bin.tar.gz.sha512 apache-pulsar-$VERSION-src.tar.gz apache-pulsar-$VERSION-src.tar.gz.asc \
     apache-pulsar-$VERSION-src.tar.gz.sha512; do
-        wget --progress=bar:force:noscroll -c $BASE_URL/$file
+        wget -nv --progress=bar:force:noscroll -c $BASE_URL/$file
     done
 
     for file in pulsar-io-cassandra-$VERSION.nar pulsar-io-cassandra-$VERSION.nar.asc \
     pulsar-io-cassandra-$VERSION.nar.sha512; do
-        wget --progress=bar:force:noscroll -c $BASE_URL/connectors/$file
+        wget -nv --progress=bar:force:noscroll -c $BASE_URL/connectors/$file
     done
 
     # Import the Pulsar KEYS
@@ -134,7 +134,7 @@ if [[ ! $LOCAL ]]; then
 
     if [[ ! -f apache-pulsar-$VERSION-src/build_ok && ! $SKIP_BUILD ]]; then
         cd apache-pulsar-$VERSION-src
-        mvn -B clean install -DskipTests
+        mvn -B -ntp clean install -DskipTests
         touch build_ok
         cd ..
     fi
