@@ -48,7 +48,7 @@ if ($baseImageName -and $m2CacheVolumeName -and $m2CacheVolumeName -ne "none") {
 docker pull $imageName
 
 # Url for the validate_pulsar_release.sh script
-$scriptUrl = $env:PULSAR_RELEASE_VALIDATION_SCRIPT ?? "https://raw.githubusercontent.com/lhotari/pulsar-release-validation/refs/heads/$scriptVersion/scripts/validate_pulsar_release.sh"
+$scriptUrl = $env:PULSAR_RELEASE_VALIDATION_SCRIPT ?? "https://raw.githubusercontent.com/lhotari/pulsar-release-validation/refs/tags/$scriptVersion/scripts/validate_pulsar_release.sh"
 Write-Host "Using validation script: $scriptUrl"
 
 # Create unique docker network

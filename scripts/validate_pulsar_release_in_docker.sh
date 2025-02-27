@@ -43,7 +43,7 @@ fi
 docker pull $imageName
 
 # Url for the validate_pulsar_release.sh script
-scriptUrl=${PULSAR_RELEASE_VALIDATION_SCRIPT:-"https://raw.githubusercontent.com/lhotari/pulsar-release-validation/refs/heads/$scriptVersion/scripts/validate_pulsar_release.sh"}
+scriptUrl=${PULSAR_RELEASE_VALIDATION_SCRIPT:-"https://raw.githubusercontent.com/lhotari/pulsar-release-validation/refs/tags/$scriptVersion/scripts/validate_pulsar_release.sh"}
 echo "Using validation script: $scriptUrl"
 
 # Create unique docker network
