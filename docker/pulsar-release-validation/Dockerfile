@@ -7,7 +7,7 @@ cd /tmp
 git clone --depth=1 https://github.com/apache/pulsar
 cd pulsar
 echo "Downloading maven dependencies"
-mvn -B -fn -ntp dependency:go-offline
+mvn -B -fn -ntp -T 1C dependency:go-offline
 # Copy the cache contents to a location in the filesystem
 mkdir -p /m2-cache
 cp -r /root/.m2/* /m2-cache/
