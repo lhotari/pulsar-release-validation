@@ -231,13 +231,25 @@ Please see the <<cost-considerations,cost considerations section>> for details o
 ----
 gcloud compute instances create pulsar-release-validation \
   --machine-type=e2-highcpu-8 \
-  --image-family=debian-12 \
-  --image-project=debian-cloud \
+  --image-project=ubuntu-os-cloud \
+  --image-family=ubuntu-2204-lts \
   --boot-disk-size=200GB \
   --boot-disk-type=pd-ssd
 ----
 
-Connect to VM via SSH:
+[NOTE]
+====
+If you'd instead like to use a different Ubuntu version, you can run the following command to see which image family options are available:
+
+[source,shell]
+----
+gcloud compute images list --project=ubuntu-os-cloud --no-standard-images
+----
+====
+
+Connect to the VM via SSH:
+
+You might need to wait for about 30 seconds for the VM to boot up after the creation command completes. Retry if the connection fails.
 
 [source,shell]
 ----
@@ -254,10 +266,55 @@ This configures the VM optimized for running Java applications, docker container
 
 [source,shell]
 ----
-# Install Docker and other tooling
-sudo bash -c "export PERL_BADLANG=0 && apt-get update && apt-get install -y docker.io git tig tmux sysfsutils htop sysstat iotop iftop curl zip unzip wget ca-certificates git gpg locales netcat-openbsd jq yq vim procps less netcat-openbsd dnsutils iputils-ping && adduser $USER docker"
+# Configures Debian or Ubuntu VM optimized for development testing and running Java applications, docker containers, 
+# and also tunes the Linux kernel settings for profiling with async-profiler.
 
-# Tune Linux Transparent HugePages (THP) for Java processes
+# Install Docker and other tooling
+sudo bash <<'EOF'
+# Setup options for non-interactive apt-get
+export DEBIAN_FRONTEND=noninteractive
+APT_OPTIONS="-y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold"
+export PERL_BADLANG=0
+
+# Update package index
+apt-get update
+# Upgrade existing packages to the latest version
+apt-get ${APT_OPTIONS} dist-upgrade
+
+# apt packages to install
+PACKAGES=$(cat <<'PKGLIST'
+  # system utilities 
+  sysfsutils locales ca-certificates apt-transport-https snapd
+  # docker
+  docker.io
+  # dev tools, etc.
+  python3-minimal git tig vim tmux less ripgrep tree pv fzf
+  # monitoring tools
+  htop procps sysstat iotop iftop
+  # networking tools
+  curl wget netcat-openbsd dnsutils iputils-ping
+  # compression & encryption utilities
+  zip unzip gpg
+  # json, xml utilities
+  jq xmlstarlet
+PKGLIST
+)
+
+# Install packages
+apt-get ${APT_OPTIONS} install $(echo "$PACKAGES" | grep -v '^\s*#' | tr -s ' ' | tr '\n' ' ')
+
+# Install yq using snap, a yaml tool (which is not available in apt on Ubuntu 22.04)
+snap install yq
+
+# Add the current user to the docker group
+adduser $(logname) docker
+EOF
+
+# User tooling
+# install uv, a fast modern package manager for Python for handling Python scripts that could be added later
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Tune Linux Transparent HugePages (THP) for Java processes in a persistent way with sysfsutils
 cat <<EOF | sudo tee /etc/sysfs.d/transparent_hugepage.conf
 # use "madvise" Linux Transparent HugePages (THP) setting
 # https://www.kernel.org/doc/html/latest/admin-guide/mm/transhuge.html
@@ -271,13 +328,13 @@ EOF
 sudo systemctl enable sysfsutils.service
 sudo systemctl restart sysfsutils.service
 
-# Tune Linux kernel settings
+# Tune Linux kernel settings in a persistent way
 cat <<EOF | sudo tee /etc/sysctl.d/99-vm-tuning.conf
 # set swappiness to 1 to use swapping as a last resort
 vm.swappiness=1
-# set max_map_count to 262144 to allow large memory-mapped files
+# set max_map_count to allow large memory-mapped files
 vm.max_map_count=262144
-# set aio-max-nr to 1048576 to allow large asynchronous I/O, required by some docker container (not specific to Pulsar)
+# set aio-max-nr to allow large asynchronous I/O, required by some docker containers
 fs.aio-max-nr=1048576
 # set inotify limits to allow large number of files to be watched
 fs.inotify.max_user_instances=1024
@@ -295,23 +352,23 @@ kernel.perf_event_mlock_kb=2048
 EOF
 sudo sysctl -p /etc/sysctl.d/99-vm-tuning.conf
 
-# Configure number of open files limits for systemd
+# Configure default number of open files limits for systemd in a persistent way
 sudo mkdir -p /etc/systemd/system.conf.d/
 cat <<EOF | sudo tee /etc/systemd/system.conf.d/99-limits.conf
 [Manager]
-DefaultLimitNOFILE=1048576
+DefaultLimitNOFILE=65536:524288
 EOF
 
-# Configure number of open files limits for the default user
+# Configure number of open files limits for the default user in a persistent way
 cat <<EOF | sudo tee /etc/security/limits.d/99-limits.conf
-*               soft    nofile          1048576
-*               hard    nofile          1048576
+*               soft    nofile          65536
+*               hard    nofile          524288
 EOF
 
-# Reload systemd to apply the changes to systemd
+# Reload systemd to apply the changes to systemd without rebooting
 sudo systemctl daemon-reload
 
-# Limit Docker logging to 10MB and 3 files
+# Limit Docker logging to 10MB and 3 files to avoid filling up the disk
 cat <<EOF | sudo tee /etc/docker/daemon.json
 {
   "log-driver": "json-file",
@@ -326,9 +383,12 @@ EOF
 echo 'Defaults env_keep += "PERL_BADLANG"' | sudo tee /etc/sudoers.d/perl-locale
 sudo chmod 440 /etc/sudoers.d/perl-locale
 echo "PERL_BADLANG=0" | sudo tee -a /etc/environment
+export PERL_BADLANG=0
 
 # Restart Docker to apply the changes
 sudo systemctl restart docker
+
+# Exit the SSH session
 exit
 ----
 
