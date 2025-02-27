@@ -455,7 +455,7 @@ echo "Boot disk name: $BOOT_DISK_NAME"
 
 # Create a snapshot of the VM's disk
 gcloud compute disks snapshot $BOOT_DISK_NAME \
-  --snapshot-names=pulsar-validation-snapshot \
+  --snapshot-names=pulsar-release-validation-snapshot \
   --description="Snapshot of Pulsar Release Validation VM with Maven cache"
 ----
 
@@ -478,7 +478,7 @@ When you need to validate a new release, you can create a VM from your snapshot:
 ----
 # First, create a disk from the snapshot
 gcloud compute disks create pulsar-release-validation \
-  --source-snapshot=pulsar-validation-snapshot \
+  --source-snapshot=pulsar-release-validation-snapshot \
   --size=200GB \
   --type=pd-ssd
 
