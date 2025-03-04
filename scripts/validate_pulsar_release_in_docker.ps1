@@ -7,6 +7,14 @@
 # Prerequisites:
 # - Docker with docker-in-docker support
 
+# Check PowerShell version
+$psVersion = $PSVersionTable.PSVersion
+if ($psVersion.Major -lt 7) {
+    Write-Error "Error: This script requires PowerShell 7.0 or later. Current version: $($psVersion.ToString())"
+    Write-Error "Please install a newer version of PowerShell: https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell"
+    exit 1
+}
+
 # Enable strict mode
 $ErrorActionPreference = 'Stop'
 
