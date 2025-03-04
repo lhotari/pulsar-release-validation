@@ -75,7 +75,7 @@ The script requires PowerShell 7.0 or later. If you already have PowerShell inst
 $PSVersionTable.PSVersion
 ----
 
-If you need to install a suitable version of PowerShell, see link:https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell[the official documentation].
+If you need to install a newer version of PowerShell, follow the instructions in the link:https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows[official PowerShell installation guide]. The MSI package installation is recommended as it automatically adds PowerShell to Windows Terminal profiles and provides the best integration with Windows. PowerShell 7.0 or later is required for this script to function properly.
 
 Run the script with the following command:
 
