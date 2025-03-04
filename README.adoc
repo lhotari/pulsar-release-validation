@@ -67,6 +67,18 @@ Examples:
 [[windows-validation]]
 ==== On Windows (PowerShell)
 
+The script requires PowerShell 7.0 or later. If you already have PowerShell installed, you can check the version with the following command:
+
+[source,powershell]
+----
+# check the current PowerShell version
+$PSVersionTable.PSVersion
+----
+
+If you need to install a suitable version of PowerShell, see link:https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell[the official documentation].
+
+Run the script with the following command:
+
 [source,powershell]
 ----
 .\scripts\validate_pulsar_release_in_docker.ps1 [release-version] [candidate-number] | Tee-Object -FilePath [log-file-name]
