@@ -483,9 +483,11 @@ Once you've created a snapshot, you can delete the VM and disk to avoid ongoing 
 
 [source,shell]
 ----
-BOOT_DISK_NAME=$(gcloud compute instances describe pulsar-release-validation --format="value(disks[0].source.basename())")
-gcloud compute instances delete pulsar-release-validation
-gcloud compute disks delete $BOOT_DISK_NAME
+# delete the VM and disk, you will be prompted to confirm the deletion
+gcloud compute instances delete pulsar-release-validation --delete-disks=boot
+
+# validate that you cannot see the disk anymore
+gcloud compute disks list
 ----
 
 [[vm-from-snapshot]]
@@ -495,16 +497,12 @@ When you need to validate a new release, you can create a VM from your snapshot:
 
 [source,shell]
 ----
-# First, create a disk from the snapshot
-gcloud compute disks create pulsar-release-validation \
-  --source-snapshot=pulsar-release-validation-snapshot \
-  --size=200GB \
-  --type=pd-ssd
-
-# Then, create a VM using this disk
+# create a VM using the snapshot
 gcloud compute instances create pulsar-release-validation \
   --machine-type=e2-highcpu-8 \
-  --disk=name=pulsar-release-validation,boot=yes
+  --boot-disk-size=200GB \
+  --boot-disk-type=pd-ssd \
+  --source-snapshot=pulsar-release-validation-snapshot
 ----
 
 Now you can directly continue from the "Reconnect and Run the Validation" step.
